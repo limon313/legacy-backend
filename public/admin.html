@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legacy Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,'Segoe UI',system-ui,sans-serif}
+:root{--bg:#080C14;--bg2:#0F1623;--bg3:#161F30;--a1:#6C63FF;--a2:#4ECDC4;--green:#00D68F;--red:#FF6B6B;--amber:#FFD166;--t1:#EEF2FF;--t2:#7B8DB0;--bd:#1C2A42}
+body{background:var(--bg);color:var(--t1);min-height:100vh}
+.login-wrap{max-width:380px;margin:80px auto;padding:0 20px}
+.logo{font-size:40px;font-weight:900;letter-spacing:-2px;text-align:center;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.logo-sub{text-align:center;color:var(--t2);font-size:13px;margin-bottom:36px}
+.input{width:100%;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;color:var(--t1);font-size:15px;outline:none;margin-bottom:12px}
+.input:focus{border-color:var(--a1)}
+.btn{width:100%;background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff;border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:700;cursor:pointer}
+.alert{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:12px}
+.alert-error{background:#FF6B6B15;border:1px solid #FF6B6B44;color:var(--red)}
+.alert-success{background:#00D68F15;border:1px solid #00D68F44;color:var(--green)}
+
+.wrap{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.topbar-logo{font-size:20px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logout-btn{background:var(--bg2);border:1px solid var(--bd);color:var(--t2);padding:8px 16px;border-radius:10px;font-size:13px;cursor:pointer}
+
+.tabs{display:flex;gap:6px;margin-bottom:24px;background:var(--bg2);border-radius:14px;padding:4px}
+.tab{flex:1;padding:11px;border-radius:11px;border:none;background:none;font-size:12px;font-weight:700;cursor:pointer;color:var(--t2);text-transform:uppercase;letter-spacing:.3px}
+.tab.active{background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:18px}
+.stat-label{font-size:11px;color:var(--t2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.stat-value{font-size:26px;font-weight:800;color:var(--t1)}
+.stat-icon{font-size:20px;margin-bottom:8px}
+
+.panel{display:none}.panel.active{display:block}
+.table-wrap{overflow-x:auto;border-radius:16px}
+table{width:100%;border-collapse:collapse;background:var(--bg2)}
+th{text-align:left;padding:12px 14px;font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--bd);background:var(--bg3)}
+td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--bd)}
+tr:last-child td{border-bottom:none}
+.badge{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700}
+.badge-green{background:#00D68F15;color:var(--green)}
+.badge-red{background:#FF6B6B15;color:var(--red)}
+.badge-amber{background:#FFD16615;color:var(--amber)}
+.loading{text-align:center;padding:40px;color:var(--t2)}
+
+.adj-card{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:24px;max-width:420px}
+.adj-title{font-size:16px;font-weight:700;margin-bottom:16px}
+</style>
+</head>
+<body>
+
+<div id="login-screen" class="login-wrap">
+  <div class="logo">Legacy</div>
+  <div class="logo-sub">Admin Paneli</div>
+  <div id="login-alert"></div>
+  <input class="input" id="admin-phone" type="tel" placeholder="Telefon">
+  <input class="input" id="admin-pass" type="password" placeholder="Şifre">
+  <button class="btn" onclick="adminLogin()">Giriş Yap</button>
+</div>
+
+<div id="admin-panel" style="display:none">
+<div class="wrap">
+  <div class="topbar">
+    <div class="topbar-logo">Legacy Admin</div>
+    <button class="logout-btn" onclick="adminLogout()">Çıkış</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchPanel('summary')">Özet</button>
+    <button class="tab" onclick="switchPanel('users')">Kullanıcılar</button>
+    <button class="tab" onclick="switchPanel('transactions')">İşlemler</button>
+    <button class="tab" onclick="switchPanel('adjust')">Bakiye Düzelt</button>
+  </div>
+
+  <div id="panel-summary" class="panel active">
+    <div class="stats-grid" id="stats-grid"><div class="loading">Yükleniyor...</div></div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Tip</th><th>Adet</th><th>Toplam</th></tr></thead><tbody id="volume-table"></tbody></table>
+    </div>
+  </div>
+
+  <div id="panel-users" class="panel">
+    <div class="table-wrap">
+      <table><thead><tr><th>Ad</th><th>Telefon</th><th>Bakiye</th><th>Kayıt Tarihi</th></tr></thead>
+      <tbody id="users-table"><tr><td colspan="4" class="loading">Yükleniyor...</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <div id="panel-transactions" class="panel">
+    <div class="table-wrap">
+      <table><thead><tr><th>Kullanıcı</th><th>Tip</th><th>Tutar</th><th>Açıklama</th><th>Tarih</th></tr></thead>
+      <tbody id="tx-table"><tr><td colspan="5" class="loading">Yükleniyor...</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <div id="panel-adjust" class="panel">
+    <div class="adj-card">
+      <div class="adj-title">Bakiye Düzelt</div>
+      <div id="adjust-alert"></div>
+      <input class="input" id="adj-userid" type="text" placeholder="Kullanıcı ID (UUID)">
+      <input class="input" id="adj-amount" type="number" placeholder="Tutar (+ekle / -çıkar)">
+      <input class="input" id="adj-reason" type="text" placeholder="Sebep">
+      <button class="btn" onclick="adjustBalance()">Uygula</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const API = 'https://legacy-backend.onrender.com/api';
+let token = localStorage.getItem('legacy_admin_token');
+if(token) showPanel();
+
+async function adminLogin(){
+  const phone=document.getElementById('admin-phone').value, password=document.getElementById('admin-pass').value;
+  try{
+    const r=await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,password})});
+    const d=await r.json(); if(!r.ok){document.getElementById('login-alert').innerHTML=`<div class="alert alert-error">${d.error||'Hata'}</div>`;return;}
+    token=d.token;
+    const test=await fetch(API+'/admin/summary',{headers:{Authorization:'Bearer '+token}});
+    if(test.status===403){document.getElementById('login-alert').innerHTML='<div class="alert alert-error">Admin yetkisi yok</div>';return;}
+    localStorage.setItem('legacy_admin_token',token); showPanel();
+  }catch(e){document.getElementById('login-alert').innerHTML='<div class="alert alert-error">Sunucu hatası</div>';}
+}
+function adminLogout(){ localStorage.removeItem('legacy_admin_token'); token=null; document.getElementById('admin-panel').style.display='none'; document.getElementById('login-screen').style.display='block'; }
+function showPanel(){ document.getElementById('login-screen').style.display='none'; document.getElementById('admin-panel').style.display='block'; loadSummary(); }
+function switchPanel(n){ document.querySelectorAll('.tab').forEach((t,i)=>{const ns=['summary','users','transactions','adjust'];t.classList.toggle('active',ns[i]===n);}); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active')); document.getElementById('panel-'+n).classList.add('active'); if(n==='summary')loadSummary(); if(n==='users')loadUsers(); if(n==='transactions')loadTransactions(); }
+
+async function loadSummary(){
+  try{ const r=await fetch(API+'/admin/summary',{headers:{Authorization:'Bearer '+token}}); const d=await r.json();
+  document.getElementById('stats-grid').innerHTML=`<div class="stat-card"><div class="stat-icon">👥</div><div class="stat-label">Kullanıcı</div><div class="stat-value">${d.total_users}</div></div><div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Toplam Bakiye</div><div class="stat-value">₺${parseFloat(d.total_balance).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div></div><div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">İşlem</div><div class="stat-value">${d.total_transactions}</div></div><div class="stat-card"><div class="stat-icon">📅</div><div class="stat-label">Bugün</div><div class="stat-value">${d.transactions_today}</div></div>`;
+  document.getElementById('volume-table').innerHTML=d.volume_by_type.map(v=>`<tr><td>${v.type}</td><td>${v.count}</td><td>₺${parseFloat(v.total).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td></tr>`).join(''); }catch(e){}
+}
+async function loadUsers(){ try{ const r=await fetch(API+'/admin/users',{headers:{Authorization:'Bearer '+token}}); const users=await r.json(); document.getElementById('users-table').innerHTML=users.map(u=>`<tr><td>${u.name}</td><td>${u.phone}</td><td>₺${parseFloat(u.balance).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td><td>${new Date(u.created_at).toLocaleDateString('tr-TR')}</td></tr>`).join(''); }catch(e){} }
+async function loadTransactions(){ try{ const r=await fetch(API+'/admin/transactions',{headers:{Authorization:'Bearer '+token}}); const txs=await r.json(); document.getElementById('tx-table').innerHTML=txs.map(t=>`<tr><td>${t.user_name}</td><td><span class="badge ${t.type==='topup'?'badge-green':t.type==='payment'?'badge-red':'badge-amber'}">${t.type}</span></td><td>₺${parseFloat(t.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td><td>${t.description||''}</td><td>${new Date(t.created_at).toLocaleString('tr-TR')}</td></tr>`).join(''); }catch(e){} }
+async function adjustBalance(){ const user_id=document.getElementById('adj-userid').value, amount=document.getElementById('adj-amount').value, reason=document.getElementById('adj-reason').value; if(!user_id||!amount){document.getElementById('adjust-alert').innerHTML='<div class="alert alert-error">ID ve tutar gerekli</div>';return;} try{ const r=await fetch(API+'/admin/adjust-balance',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({user_id,amount:parseFloat(amount),reason})}); const d=await r.json(); document.getElementById('adjust-alert').innerHTML=r.ok?'<div class="alert alert-success">Başarılı!</div>':`<div class="alert alert-error">${d.error}</div>`; }catch(e){document.getElementById('adjust-alert').innerHTML='<div class="alert alert-error">Sunucu hatası</div>';} }
+</script>
+</body>
+</html>

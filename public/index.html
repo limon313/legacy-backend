@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Legacy">
+<title>Legacy</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,'Segoe UI',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+:root{--bg:#080C14;--bg2:#0F1623;--bg3:#161F30;--a1:#6C63FF;--a2:#4ECDC4;--green:#00D68F;--red:#FF6B6B;--amber:#FFD166;--t1:#EEF2FF;--t2:#7B8DB0;--bd:#1C2A42}
+body{background:var(--bg);color:var(--t1);min-height:100vh;max-width:430px;margin:0 auto}
+.screen{display:none;min-height:100vh;padding-bottom:80px}
+.screen.active{display:block}
+
+.header{padding:52px 20px 16px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:24px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-sub{font-size:12px;color:var(--t2);margin-top:2px}
+
+.balance-card{margin:0 20px 20px;background:linear-gradient(135deg,#1A1060,#0D2040);border:1px solid #2A2060;border-radius:24px;padding:26px;position:relative;overflow:hidden}
+.balance-card::after{content:'';position:absolute;bottom:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,#6C63FF15,transparent);border-radius:50%}
+.balance-label{font-size:12px;color:var(--t2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.balance-amount{font-size:38px;font-weight:800;color:var(--t1);letter-spacing:-1px}
+.balance-sub{font-size:12px;color:var(--t2);margin-top:12px;font-family:monospace}
+
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 20px;margin-bottom:24px}
+.qa{background:var(--bg2);border:1px solid var(--bd);border-radius:18px;padding:14px 6px;text-align:center;cursor:pointer;transition:all .15s}
+.qa:active{transform:scale(.93);background:var(--bg3)}
+.qa-icon{font-size:22px;margin-bottom:6px}
+.qa-label{font-size:10px;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+
+.section{padding:0 20px;margin-bottom:20px}
+.section-title{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.tx{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.tx-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tx-info{flex:1}
+.tx-name{font-size:13px;font-weight:600;color:var(--t1)}
+.tx-date{font-size:11px;color:var(--t2);margin-top:2px}
+.tx-amount{font-size:14px;font-weight:700}
+.tx-amount.out{color:var(--red)}
+.tx-amount.in{color:var(--green)}
+
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--bg2);border-top:1px solid var(--bd);display:flex;padding:8px 0 24px;z-index:100}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px;cursor:pointer}
+.nav-icon{font-size:20px}
+.nav-label{font-size:9px;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.nav-item.active .nav-label{color:var(--a1)}
+.nav-item.active .nav-icon{filter:drop-shadow(0 0 6px var(--a1))}
+
+.form-card{background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:20px;margin:0 20px 16px}
+.form-title{font-size:17px;font-weight:700;color:var(--t1);margin-bottom:16px}
+.input-group{margin-bottom:14px}
+.input-label{font-size:11px;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.input{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;color:var(--t1);font-size:15px;outline:none;transition:border-color .2s}
+.input:focus{border-color:var(--a1)}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.btn-primary:active{opacity:.8}
+.btn-green{background:linear-gradient(135deg,var(--green),#00A67E)}
+.btn-transfer{background:linear-gradient(135deg,var(--a2),#2EA8A0)}
+
+.alert{margin:0 20px 16px;padding:13px 16px;border-radius:12px;font-size:13px;font-weight:600}
+.alert-success{background:#00D68F15;border:1px solid #00D68F44;color:var(--green)}
+.alert-error{background:#FF6B6B15;border:1px solid #FF6B6B44;color:var(--red)}
+
+.card-item{background:var(--bg2);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.card-badge{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--a1),#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.card-info{flex:1}
+.card-name{font-size:14px;font-weight:700;color:var(--t1)}
+.card-uid{font-size:10px;color:var(--t2);font-family:monospace;margin-top:3px}
+
+.loading{text-align:center;padding:40px;color:var(--t2)}
+.spinner{display:inline-block;width:22px;height:22px;border:2px solid var(--bd);border-top-color:var(--a1);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.auth-screen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px}
+.auth-logo{text-align:center;margin-bottom:44px}
+.auth-logo-text{font-size:52px;font-weight:900;letter-spacing:-2px;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-logo-sub{font-size:13px;color:var(--t2);margin-top:6px}
+.tab-switch{display:flex;background:var(--bg2);border-radius:14px;padding:4px;margin-bottom:20px}
+.tab-btn{flex:1;padding:11px;border-radius:11px;border:none;background:none;color:var(--t2);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.tab-btn.active{background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff}
+
+.tabs2{display:flex;background:var(--bg2);border-radius:14px;padding:4px;margin:0 20px 16px}
+.tab2-btn{flex:1;padding:10px;border-radius:11px;border:none;background:none;color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.3px;transition:all .2s}
+.tab2-btn.active{background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff}
+
+.qr-display{display:flex;flex-direction:column;align-items:center;padding:24px 20px}
+.qr-box{background:#fff;padding:16px;border-radius:20px;margin-bottom:20px;box-shadow:0 8px 32px #0008}
+.qr-amount-big{font-size:32px;font-weight:800;color:var(--t1);margin-bottom:4px}
+.qr-timer{font-size:13px;color:var(--amber);font-weight:700;margin-bottom:16px}
+.qr-status-waiting{display:flex;align-items:center;gap:8px;color:var(--t2);font-size:13px}
+.qr-status-paid{color:var(--green);font-size:18px;font-weight:800}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-logo">
+    <div class="auth-logo-text">Legacy</div>
+    <div class="auth-logo-sub">Dijital Ödeme Sistemi</div>
+  </div>
+  <div class="tab-switch">
+    <button class="tab-btn active" onclick="switchAuth('login')">Giriş Yap</button>
+    <button class="tab-btn" onclick="switchAuth('register')">Kayıt Ol</button>
+  </div>
+  <div id="auth-alert"></div>
+  <div id="login-form">
+    <div class="input-group"><div class="input-label">Telefon</div><input class="input" id="login-phone" type="tel" placeholder="05001234567"></div>
+    <div class="input-group"><div class="input-label">Şifre</div><input class="input" id="login-pass" type="password" placeholder="••••••"></div>
+    <button class="btn-primary" onclick="login()">Giriş Yap</button>
+  </div>
+  <div id="register-form" style="display:none">
+    <div class="input-group"><div class="input-label">Ad Soyad</div><input class="input" id="reg-name" type="text" placeholder="Ad Soyad"></div>
+    <div class="input-group"><div class="input-label">Telefon</div><input class="input" id="reg-phone" type="tel" placeholder="05001234567"></div>
+    <div class="input-group"><div class="input-label">Şifre</div><input class="input" id="reg-pass" type="password" placeholder="••••••"></div>
+    <button class="btn-primary" onclick="register()">Kayıt Ol</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" style="display:none">
+
+<!-- ANA SAYFA -->
+<div id="screen-home" class="screen active">
+  <div class="header">
+    <div><div class="logo">Legacy</div><div class="header-sub" id="user-greeting">Hoş geldin!</div></div>
+    <div style="cursor:pointer;font-size:22px" onclick="logout()">👤</div>
+  </div>
+  <div class="balance-card">
+    <div class="balance-label">Bakiye</div>
+    <div class="balance-amount" id="balance-display">₺0,00</div>
+    <div class="balance-sub" id="card-uid-display">Yükleniyor...</div>
+  </div>
+  <div class="quick-actions">
+    <div class="qa" onclick="showScreen('transfer')"><div class="qa-icon">💸</div><div class="qa-label">Transfer</div></div>
+    <div class="qa" onclick="showScreen('qr')"><div class="qa-icon">📱</div><div class="qa-label">QR</div></div>
+    <div class="qa" onclick="showScreen('topup')"><div class="qa-icon">➕</div><div class="qa-label">Yükle</div></div>
+    <div class="qa" onclick="showScreen('cards')"><div class="qa-icon">💳</div><div class="qa-label">Kartlar</div></div>
+  </div>
+  <div class="section">
+    <div class="section-title">Son İşlemler</div>
+    <div id="recent-tx"><div class="loading"><div class="spinner"></div><br>Yükleniyor...</div></div>
+  </div>
+</div>
+
+<!-- TRANSFER -->
+<div id="screen-transfer" class="screen">
+  <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">Transfer</div><div></div></div>
+  <div id="transfer-alert"></div>
+  <div class="form-card">
+    <div class="form-title">Kullanıcıya Gönder</div>
+    <div class="input-group"><div class="input-label">Alıcı Telefon No</div><input class="input" id="tx-phone" type="tel" placeholder="05001234567"></div>
+    <div class="input-group"><div class="input-label">Tutar (₺)</div><input class="input" id="tx-amount" type="number" placeholder="0.00"></div>
+    <div class="input-group"><div class="input-label">Açıklama (opsiyonel)</div><input class="input" id="tx-desc" type="text" placeholder="Açıklama"></div>
+    <button class="btn-primary btn-transfer" onclick="doTransfer()">Gönder</button>
+  </div>
+</div>
+
+<!-- QR -->
+<div id="screen-qr" class="screen">
+  <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">QR Öde</div><div></div></div>
+  <div class="tabs2">
+    <button class="tab2-btn active" onclick="switchQrTab('create')">QR Oluştur</button>
+    <button class="tab2-btn" onclick="switchQrTab('scan')">Kod Gir & Öde</button>
+  </div>
+
+  <div id="qr-create-panel">
+    <div id="qr-create-alert"></div>
+    <div class="form-card" id="qr-form-box">
+      <div class="form-title">Tahsilat QR'ı</div>
+      <div class="input-group"><div class="input-label">Tutar (₺)</div><input class="input" id="qr-amount" type="number" placeholder="0.00"></div>
+      <div class="input-group"><div class="input-label">Açıklama (opsiyonel)</div><input class="input" id="qr-desc" type="text" placeholder="Açıklama"></div>
+      <button class="btn-primary" onclick="createQr()">QR Oluştur</button>
+    </div>
+    <div id="qr-result-box" style="display:none">
+      <div class="qr-display">
+        <div class="qr-box" id="qr-canvas"></div>
+        <div class="qr-amount-big" id="qr-result-amount"></div>
+        <div style="font-size:13px;color:var(--t2);margin-bottom:12px" id="qr-result-desc"></div>
+        <div class="qr-timer" id="qr-timer">5:00</div>
+        <div class="qr-status-waiting" id="qr-waiting"><div class="spinner" style="width:14px;height:14px;margin:0"></div><span>Ödeme bekleniyor...</span></div>
+        <div class="qr-status-paid" id="qr-paid" style="display:none">✓ Ödeme Alındı!</div>
+        <button class="btn-primary" style="margin-top:20px;width:auto;padding:12px 24px" onclick="resetQr()">Yeni QR</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="qr-scan-panel" style="display:none">
+    <div id="qr-scan-alert"></div>
+    <div class="form-card">
+      <div class="form-title">QR Kodu Gir</div>
+      <div class="input-group"><div class="input-label">QR Kod</div><input class="input" id="scan-code" type="text" placeholder="QR-XXXXXXXX" style="text-transform:uppercase"></div>
+      <div id="scan-preview" style="margin-bottom:12px"></div>
+      <button class="btn-primary btn-transfer" onclick="checkQr()" style="margin-bottom:10px">Sorgula</button>
+      <button class="btn-primary btn-green" id="scan-pay-btn" onclick="payQr()" style="display:none">Ödemeyi Onayla</button>
+    </div>
+  </div>
+</div>
+
+<!-- YÜKLE -->
+<div id="screen-topup" class="screen">
+  <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">Bakiye Yükle</div><div></div></div>
+  <div id="topup-alert"></div>
+  <div class="form-card">
+    <div class="form-title">Bakiye Ekle</div>
+    <div class="input-group"><div class="input-label">Tutar (₺)</div><input class="input" id="topup-amount" type="number" placeholder="100"></div>
+    <button class="btn-primary btn-green" onclick="doTopup()">Yükle</button>
+  </div>
+</div>
+
+<!-- KARTLAR -->
+<div id="screen-cards" class="screen">
+  <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">Kartlarım</div><div></div></div>
+  <div class="section">
+    <div id="cards-list"><div class="loading"><div class="spinner"></div><br>Yükleniyor...</div></div>
+    <button class="btn-primary" style="margin-top:14px" onclick="createCard()">+ Sanal Kart Oluştur</button>
+  </div>
+</div>
+
+<!-- GEÇMİŞ -->
+<div id="screen-history" class="screen">
+  <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">İşlem Geçmişi</div><div></div></div>
+  <div class="section"><div id="history-list"><div class="loading"><div class="spinner"></div><br>Yükleniyor...</div></div></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="showScreen('home')" id="nav-home"><div class="nav-icon">🏠</div><div class="nav-label">Ana</div></div>
+  <div class="nav-item" onclick="showScreen('transfer')" id="nav-transfer"><div class="nav-icon">💸</div><div class="nav-label">Transfer</div></div>
+  <div class="nav-item" onclick="showScreen('qr')" id="nav-qr"><div class="nav-icon">📱</div><div class="nav-label">QR</div></div>
+  <div class="nav-item" onclick="showScreen('cards')" id="nav-cards"><div class="nav-icon">💳</div><div class="nav-label">Kartlar</div></div>
+  <div class="nav-item" onclick="showScreen('history')" id="nav-history"><div class="nav-icon">📋</div><div class="nav-label">Geçmiş</div></div>
+</div>
+
+</div>
+
+<script>
+const API = 'https://legacy-backend.onrender.com/api';
+let token = localStorage.getItem('legacy_token');
+let qrTimer, qrPoller, currentQr, scannedQr;
+
+if (token) showApp(); else document.getElementById('auth-screen').style.display='flex';
+
+function showApp(){ document.getElementById('auth-screen').style.display='none'; document.getElementById('main-app').style.display='block'; loadHome(); }
+function logout(){ localStorage.removeItem('legacy_token'); token=null; document.getElementById('main-app').style.display='none'; document.getElementById('auth-screen').style.display='flex'; }
+function switchAuth(t){ document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='login')||(i===1&&t==='register'))); document.getElementById('login-form').style.display=t==='login'?'block':'none'; document.getElementById('register-form').style.display=t==='register'?'block':'none'; }
+function switchQrTab(t){ document.querySelectorAll('.tab2-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='create')||(i===1&&t==='scan'))); document.getElementById('qr-create-panel').style.display=t==='create'?'block':'none'; document.getElementById('qr-scan-panel').style.display=t==='scan'?'block':'none'; }
+
+async function login(){
+  const phone=document.getElementById('login-phone').value, password=document.getElementById('login-pass').value;
+  if(!phone||!password) return showAlert('auth-alert','Telefon ve şifre gerekli','error');
+  try{ const r=await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,password})}); const d=await r.json(); if(!r.ok) return showAlert('auth-alert',d.error||'Giriş hatası','error'); token=d.token; localStorage.setItem('legacy_token',token); showApp(); }catch(e){ showAlert('auth-alert','Sunucuya bağlanılamadı','error'); }
+}
+
+async function register(){
+  const name=document.getElementById('reg-name').value, phone=document.getElementById('reg-phone').value, password=document.getElementById('reg-pass').value;
+  if(!name||!phone||!password) return showAlert('auth-alert','Tüm alanlar gerekli','error');
+  try{ const r=await fetch(API+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,password})}); const d=await r.json(); if(!r.ok) return showAlert('auth-alert',d.error||'Kayıt hatası','error'); token=d.token; localStorage.setItem('legacy_token',token); showApp(); }catch(e){ showAlert('auth-alert','Sunucuya bağlanılamadı','error'); }
+}
+
+async function loadHome(){
+  try{ const r=await fetch(API+'/auth/profile',{headers:{Authorization:'Bearer '+token}}); const d=await r.json(); document.getElementById('user-greeting').textContent='Hoş geldin, '+d.name+'!'; document.getElementById('balance-display').textContent='₺'+parseFloat(d.balance).toLocaleString('tr-TR',{minimumFractionDigits:2}); }catch(e){}
+  try{ const r=await fetch(API+'/cards',{headers:{Authorization:'Bearer '+token}}); const cards=await r.json(); if(cards.length) document.getElementById('card-uid-display').textContent=cards[0].card_uid; }catch(e){}
+  loadTxList('recent-tx',3);
+}
+
+async function loadTxList(id,limit){
+  try{ const r=await fetch(API+'/payment/history',{headers:{Authorization:'Bearer '+token}}); const txs=await r.json(); const c=document.getElementById(id); if(!txs.length){c.innerHTML='<div class="loading">Henüz işlem yok</div>';return;} const items=limit?txs.slice(0,limit):txs; c.innerHTML=items.map(tx=>`<div class="tx"><div class="tx-icon" style="background:${tx.type==='payment'?'#FF6B6B20':tx.type==='transfer'?'#FFD16620':'#00D68F20'}">${tx.type==='payment'?'💳':tx.type==='transfer'?'💸':'➕'}</div><div class="tx-info"><div class="tx-name">${tx.description||tx.type}</div><div class="tx-date">${new Date(tx.created_at).toLocaleDateString('tr-TR')}</div></div><div class="tx-amount ${tx.type==='topup'?'in':'out'}">${tx.type==='topup'?'+':'-'}₺${parseFloat(tx.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div></div>`).join(''); }catch(e){document.getElementById(id).innerHTML='<div class="loading">Yüklenemedi</div>';}
+}
+
+async function doTransfer(){
+  const receiver_phone=document.getElementById('tx-phone').value, amount=document.getElementById('tx-amount').value, description=document.getElementById('tx-desc').value;
+  if(!receiver_phone||!amount) return showAlert('transfer-alert','Telefon ve tutar gerekli','error');
+  try{ const r=await fetch(API+'/payment/transfer',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({receiver_phone,amount:parseFloat(amount),description})}); const d=await r.json(); if(!r.ok) return showAlert('transfer-alert',d.error||'Transfer hatası','error'); showAlert('transfer-alert',d.receiver_name+"'e ₺"+amount+' gönderildi! Ref: '+d.reference_no,'success'); loadHome(); }catch(e){ showAlert('transfer-alert','Sunucu hatası','error'); }
+}
+
+async function doTopup(){
+  const amount=document.getElementById('topup-amount').value;
+  if(!amount) return showAlert('topup-alert','Tutar gir','error');
+  try{ const r=await fetch(API+'/payment/topup',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({amount:parseFloat(amount)})}); const d=await r.json(); if(!r.ok) return showAlert('topup-alert',d.error||'Hata','error'); showAlert('topup-alert','₺'+amount+' eklendi!','success'); loadHome(); }catch(e){ showAlert('topup-alert','Sunucu hatası','error'); }
+}
+
+async function loadCards(){
+  try{ const r=await fetch(API+'/cards',{headers:{Authorization:'Bearer '+token}}); const cards=await r.json(); const c=document.getElementById('cards-list'); if(!cards.length){c.innerHTML='<div class="loading">Henüz kart yok</div>';return;} c.innerHTML=cards.map(card=>`<div class="card-item"><div class="card-badge">💳</div><div class="card-info"><div class="card-name">${card.label||'Sanal Kart'}</div><div class="card-uid">${card.card_uid}</div></div><div style="font-size:11px;color:${card.is_active?'var(--green)':'var(--red)'};">${card.is_active?'Aktif':'Pasif'}</div></div>`).join(''); }catch(e){}
+}
+
+async function createCard(){ try{ const r=await fetch(API+'/cards/virtual',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({label:'Sanal Kart'})}); if(r.ok) loadCards(); }catch(e){} }
+
+async function createQr(){
+  const amount=document.getElementById('qr-amount').value, description=document.getElementById('qr-desc').value;
+  if(!amount) return showAlert('qr-create-alert','Tutar gir','error');
+  try{
+    const r=await fetch(API+'/qr/create',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({amount:parseFloat(amount),description})});
+    const d=await r.json(); if(!r.ok) return showAlert('qr-create-alert',d.error||'Hata','error');
+    currentQr=d.qr_code;
+    document.getElementById('qr-form-box').style.display='none';
+    document.getElementById('qr-result-box').style.display='block';
+    document.getElementById('qr-result-amount').textContent='₺'+parseFloat(d.amount).toLocaleString('tr-TR',{minimumFractionDigits:2});
+    document.getElementById('qr-result-desc').textContent=d.merchant_name+(description?' - '+description:'');
+    document.getElementById('qr-waiting').style.display='flex';
+    document.getElementById('qr-paid').style.display='none';
+    document.getElementById('qr-canvas').innerHTML='';
+    new QRCode(document.getElementById('qr-canvas'),{text:d.qr_code,width:200,height:200});
+    let secs=d.expires_in_seconds;
+    clearInterval(qrTimer); clearInterval(qrPoller);
+    qrTimer=setInterval(()=>{ secs--; const m=Math.floor(secs/60),s=secs%60; document.getElementById('qr-timer').textContent=m+':'+(s<10?'0':'')+s; if(secs<=0){clearInterval(qrTimer);clearInterval(qrPoller);} },1000);
+    qrPoller=setInterval(async()=>{ try{ const sr=await fetch(API+'/qr/status/'+currentQr,{headers:{Authorization:'Bearer '+token}}); const sd=await sr.json(); if(sd.status==='paid'){document.getElementById('qr-waiting').style.display='none';document.getElementById('qr-paid').style.display='block';clearInterval(qrPoller);clearInterval(qrTimer);loadHome();} }catch(e){} },3000);
+  }catch(e){ showAlert('qr-create-alert','Sunucu hatası','error'); }
+}
+
+function resetQr(){ clearInterval(qrTimer);clearInterval(qrPoller); document.getElementById('qr-form-box').style.display='block'; document.getElementById('qr-result-box').style.display='none'; document.getElementById('qr-amount').value=''; document.getElementById('qr-desc').value=''; }
+
+async function checkQr(){
+  const code=document.getElementById('scan-code').value.trim().toUpperCase();
+  if(!code) return showAlert('qr-scan-alert','Kod gir','error');
+  try{ const r=await fetch(API+'/qr/status/'+code,{headers:{Authorization:'Bearer '+token}}); const d=await r.json(); if(!r.ok){showAlert('qr-scan-alert',d.error||'Kod bulunamadı','error');document.getElementById('scan-pay-btn').style.display='none';return;} scannedQr=code; document.getElementById('scan-preview').innerHTML=`<div style="background:var(--bg3);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px"><div style="font-size:13px;color:var(--t2)">Satıcı: ${d.merchant_name}</div><div style="font-size:26px;font-weight:800;margin:6px 0">₺${parseFloat(d.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div><div style="font-size:12px;color:var(--t2)">${d.description}</div></div>`; document.getElementById('scan-pay-btn').style.display='block'; }catch(e){ showAlert('qr-scan-alert','Sunucu hatası','error'); }
+}
+
+async function payQr(){
+  if(!scannedQr) return;
+  try{ const r=await fetch(API+'/qr/pay/'+scannedQr,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token}}); const d=await r.json(); if(!r.ok) return showAlert('qr-scan-alert',d.error||'Ödeme hatası','error'); showAlert('qr-scan-alert','✓ Ödeme başarılı! '+d.merchant_name+' → ₺'+d.amount,'success'); document.getElementById('scan-code').value=''; document.getElementById('scan-preview').innerHTML=''; document.getElementById('scan-pay-btn').style.display='none'; loadHome(); }catch(e){ showAlert('qr-scan-alert','Sunucu hatası','error'); }
+}
+
+function showScreen(n){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active')); document.getElementById('screen-'+n).classList.add('active'); const nav=document.getElementById('nav-'+n); if(nav) nav.classList.add('active'); if(n==='home') loadHome(); if(n==='history') loadTxList('history-list'); if(n==='cards') loadCards(); if(n!=='qr'){clearInterval(qrTimer);clearInterval(qrPoller);} }
+
+function showAlert(id,msg,type){ const el=document.getElementById(id); el.innerHTML=`<div class="alert alert-${type}">${msg}</div>`; setTimeout(()=>el.innerHTML='',4000); }
+</script>
+</body>
+</html>
