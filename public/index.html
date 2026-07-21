@@ -13,94 +13,89 @@
 body{background:var(--bg);color:var(--t1);min-height:100vh;max-width:430px;margin:0 auto}
 .screen{display:none;min-height:100vh;padding-bottom:80px}
 .screen.active{display:block}
-
 .header{padding:52px 20px 16px;display:flex;align-items:center;justify-content:space-between}
 .logo{font-size:24px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .header-sub{font-size:12px;color:var(--t2);margin-top:2px}
-
 .balance-card{margin:0 20px 20px;background:linear-gradient(135deg,#1A1060,#0D2040);border:1px solid #2A2060;border-radius:24px;padding:26px;position:relative;overflow:hidden}
 .balance-card::after{content:'';position:absolute;bottom:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,#6C63FF15,transparent);border-radius:50%}
 .balance-label{font-size:12px;color:var(--t2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
-.balance-amount{font-size:38px;font-weight:800;color:var(--t1);letter-spacing:-1px}
+.balance-amount{font-size:38px;font-weight:800;letter-spacing:-1px}
 .balance-sub{font-size:12px;color:var(--t2);margin-top:12px;font-family:monospace}
-
 .quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 20px;margin-bottom:24px}
 .qa{background:var(--bg2);border:1px solid var(--bd);border-radius:18px;padding:14px 6px;text-align:center;cursor:pointer;transition:all .15s}
 .qa:active{transform:scale(.93);background:var(--bg3)}
 .qa-icon{font-size:22px;margin-bottom:6px}
 .qa-label{font-size:10px;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-
 .section{padding:0 20px;margin-bottom:20px}
 .section-title{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
 .tx{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
 .tx-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.tx-info{flex:1}
-.tx-name{font-size:13px;font-weight:600;color:var(--t1)}
+.tx-info{flex:1;min-width:0}
+.tx-name{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tx-date{font-size:11px;color:var(--t2);margin-top:2px}
-.tx-amount{font-size:14px;font-weight:700}
+.tx-amount{font-size:14px;font-weight:700;white-space:nowrap}
 .tx-amount.out{color:var(--red)}
 .tx-amount.in{color:var(--green)}
-
+.pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-left:6px}
+.pill-pending{background:#FFD16620;color:var(--amber)}
+.pill-ok{background:#00D68F20;color:var(--green)}
+.pill-rej{background:#FF6B6B20;color:var(--red)}
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--bg2);border-top:1px solid var(--bd);display:flex;padding:8px 0 24px;z-index:100}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px;cursor:pointer}
 .nav-icon{font-size:20px}
-.nav-label{font-size:9px;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.nav-label{font-size:9px;color:var(--t2);font-weight:700;text-transform:uppercase}
 .nav-item.active .nav-label{color:var(--a1)}
-.nav-item.active .nav-icon{filter:drop-shadow(0 0 6px var(--a1))}
-
 .form-card{background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:20px;margin:0 20px 16px}
-.form-title{font-size:17px;font-weight:700;color:var(--t1);margin-bottom:16px}
+.form-title{font-size:17px;font-weight:700;margin-bottom:16px}
 .input-group{margin-bottom:14px}
 .input-label{font-size:11px;color:var(--t2);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
 .input{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;color:var(--t1);font-size:15px;outline:none;transition:border-color .2s}
 .input:focus{border-color:var(--a1)}
-.btn-primary{width:100%;background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.hint{font-size:11px;color:var(--t2);margin-top:6px}
+.hint b{color:var(--a2)}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer}
 .btn-primary:active{opacity:.8}
 .btn-green{background:linear-gradient(135deg,var(--green),#00A67E)}
 .btn-transfer{background:linear-gradient(135deg,var(--a2),#2EA8A0)}
-
 .alert{margin:0 20px 16px;padding:13px 16px;border-radius:12px;font-size:13px;font-weight:600}
 .alert-success{background:#00D68F15;border:1px solid #00D68F44;color:var(--green)}
 .alert-error{background:#FF6B6B15;border:1px solid #FF6B6B44;color:var(--red)}
-
 .card-item{background:var(--bg2);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
 .card-badge{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--a1),#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .card-info{flex:1}
-.card-name{font-size:14px;font-weight:700;color:var(--t1)}
+.card-name{font-size:14px;font-weight:700}
 .card-uid{font-size:10px;color:var(--t2);font-family:monospace;margin-top:3px}
-
 .loading{text-align:center;padding:40px;color:var(--t2)}
 .spinner{display:inline-block;width:22px;height:22px;border:2px solid var(--bd);border-top-color:var(--a1);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .auth-screen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px}
 .auth-logo{text-align:center;margin-bottom:44px}
 .auth-logo-text{font-size:52px;font-weight:900;letter-spacing:-2px;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .auth-logo-sub{font-size:13px;color:var(--t2);margin-top:6px}
 .tab-switch{display:flex;background:var(--bg2);border-radius:14px;padding:4px;margin-bottom:20px}
-.tab-btn{flex:1;padding:11px;border-radius:11px;border:none;background:none;color:var(--t2);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.tab-btn{flex:1;padding:11px;border-radius:11px;border:none;background:none;color:var(--t2);font-size:14px;font-weight:700;cursor:pointer}
 .tab-btn.active{background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff}
-
 .tabs2{display:flex;background:var(--bg2);border-radius:14px;padding:4px;margin:0 20px 16px}
-.tab2-btn{flex:1;padding:10px;border-radius:11px;border:none;background:none;color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.3px;transition:all .2s}
+.tab2-btn{flex:1;padding:10px;border-radius:11px;border:none;background:none;color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;text-transform:uppercase}
 .tab2-btn.active{background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff}
-
 .qr-display{display:flex;flex-direction:column;align-items:center;padding:24px 20px}
-.qr-box{background:#fff;padding:16px;border-radius:20px;margin-bottom:20px;box-shadow:0 8px 32px #0008}
-.qr-amount-big{font-size:32px;font-weight:800;color:var(--t1);margin-bottom:4px}
+.qr-box{background:#fff;padding:16px;border-radius:20px;margin-bottom:20px}
+.qr-amount-big{font-size:32px;font-weight:800;margin-bottom:4px}
 .qr-timer{font-size:13px;color:var(--amber);font-weight:700;margin-bottom:16px}
 .qr-status-waiting{display:flex;align-items:center;gap:8px;color:var(--t2);font-size:13px}
 .qr-status-paid{color:var(--green);font-size:18px;font-weight:800}
+.wd-item{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:8px}
+.wd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.wd-amount{font-size:17px;font-weight:800}
+.wd-meta{font-size:11px;color:var(--t2);font-family:monospace}
+.chip{background:var(--bg3);border:1px solid var(--bd);color:var(--t1);border-radius:12px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer}
+.chip:active{background:var(--a1);border-color:var(--a1)}
 </style>
 </head>
 <body>
 
-<!-- AUTH -->
 <div id="auth-screen" class="auth-screen">
-  <div class="auth-logo">
-    <div class="auth-logo-text">Legacy</div>
-    <div class="auth-logo-sub">Dijital Ödeme Sistemi</div>
-  </div>
+  <div class="auth-logo"><div class="auth-logo-text">Legacy</div><div class="auth-logo-sub">Dijital Ödeme Sistemi</div></div>
   <div class="tab-switch">
     <button class="tab-btn active" onclick="switchAuth('login')">Giriş Yap</button>
     <button class="tab-btn" onclick="switchAuth('register')">Kayıt Ol</button>
@@ -119,10 +114,8 @@ body{background:var(--bg);color:var(--t1);min-height:100vh;max-width:430px;margi
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="main-app" style="display:none">
 
-<!-- ANA SAYFA -->
 <div id="screen-home" class="screen active">
   <div class="header">
     <div><div class="logo">Legacy</div><div class="header-sub" id="user-greeting">Hoş geldin!</div></div>
@@ -134,7 +127,7 @@ body{background:var(--bg);color:var(--t1);min-height:100vh;max-width:430px;margi
     <div class="balance-sub" id="card-uid-display">Yükleniyor...</div>
   </div>
   <div class="quick-actions">
-    <div class="qa" onclick="showScreen('transfer')"><div class="qa-icon">💸</div><div class="qa-label">Transfer</div></div>
+    <div class="qa" onclick="showScreen('transfer')"><div class="qa-icon">💸</div><div class="qa-label">Gönder</div></div>
     <div class="qa" onclick="showScreen('qr')"><div class="qa-icon">📱</div><div class="qa-label">QR</div></div>
     <div class="qa" onclick="showScreen('topup')"><div class="qa-icon">➕</div><div class="qa-label">Yükle</div></div>
     <div class="qa" onclick="showScreen('cards')"><div class="qa-icon">💳</div><div class="qa-label">Kartlar</div></div>
@@ -145,33 +138,59 @@ body{background:var(--bg);color:var(--t1);min-height:100vh;max-width:430px;margi
   </div>
 </div>
 
-<!-- TRANSFER -->
 <div id="screen-transfer" class="screen">
-  <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">Transfer</div><div></div></div>
+  <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">Para Gönder</div><div></div></div>
+  <div class="tabs2">
+    <button class="tab2-btn active" onclick="switchTrTab('user')">Kullanıcıya</button>
+    <button class="tab2-btn" onclick="switchTrTab('iban')">IBAN'a</button>
+    <button class="tab2-btn" onclick="switchTrTab('list')">Taleplerim</button>
+  </div>
   <div id="transfer-alert"></div>
-  <div class="form-card">
+
+  <div id="tr-user-panel" class="form-card">
     <div class="form-title">Kullanıcıya Gönder</div>
     <div class="input-group"><div class="input-label">Alıcı Telefon No</div><input class="input" id="tx-phone" type="tel" placeholder="05001234567"></div>
     <div class="input-group"><div class="input-label">Tutar (₺)</div><input class="input" id="tx-amount" type="number" placeholder="0.00"></div>
-    <div class="input-group"><div class="input-label">Açıklama (opsiyonel)</div><input class="input" id="tx-desc" type="text" placeholder="Açıklama"></div>
+    <div class="input-group"><div class="input-label">Açıklama</div><input class="input" id="tx-desc" type="text" placeholder="Opsiyonel"></div>
     <button class="btn-primary btn-transfer" onclick="doTransfer()">Gönder</button>
+  </div>
+
+  <div id="tr-iban-panel" style="display:none">
+    <div class="form-card">
+      <div class="form-title">IBAN'a Çekim Talebi</div>
+      <div class="input-group">
+        <div class="input-label">IBAN</div>
+        <input class="input" id="wd-iban" type="text" placeholder="TR00 0000 0000 0000 0000 0000 00" oninput="onIbanInput()">
+        <div class="hint" id="wd-bank-hint"></div>
+      </div>
+      <div class="input-group"><div class="input-label">Alıcı Ad Soyad</div><input class="input" id="wd-name" type="text" placeholder="Hesap sahibinin adı"></div>
+      <div class="input-group"><div class="input-label">Tutar (₺)</div><input class="input" id="wd-amount" type="number" placeholder="0.00"></div>
+      <div class="input-group"><div class="input-label">Not</div><input class="input" id="wd-note" type="text" placeholder="Opsiyonel"></div>
+      <button class="btn-primary" onclick="doWithdrawal()">Çekim Talebi Oluştur</button>
+      <div class="hint" style="margin-top:12px">Talebiniz oluşturulunca bakiyeniz düşer ve onay bekler. Onaylanınca para hesabınıza gönderilir. Reddedilirse bakiye iade edilir.</div>
+    </div>
+  </div>
+
+  <div id="tr-list-panel" style="display:none">
+    <div class="section">
+      <div class="section-title">Çekim Taleplerim</div>
+      <div id="wd-list"><div class="loading"><div class="spinner"></div><br>Yükleniyor...</div></div>
+    </div>
   </div>
 </div>
 
-<!-- QR -->
 <div id="screen-qr" class="screen">
   <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">QR Öde</div><div></div></div>
   <div class="tabs2">
     <button class="tab2-btn active" onclick="switchQrTab('create')">QR Oluştur</button>
     <button class="tab2-btn" onclick="switchQrTab('scan')">Kod Gir & Öde</button>
   </div>
-
   <div id="qr-create-panel">
     <div id="qr-create-alert"></div>
     <div class="form-card" id="qr-form-box">
       <div class="form-title">Tahsilat QR'ı</div>
       <div class="input-group"><div class="input-label">Tutar (₺)</div><input class="input" id="qr-amount" type="number" placeholder="0.00"></div>
-      <div class="input-group"><div class="input-label">Açıklama (opsiyonel)</div><input class="input" id="qr-desc" type="text" placeholder="Açıklama"></div>
+      <div class="input-group"><div class="input-label">Açıklama</div><input class="input" id="qr-desc" type="text" placeholder="Opsiyonel"></div>
       <button class="btn-primary" onclick="createQr()">QR Oluştur</button>
     </div>
     <div id="qr-result-box" style="display:none">
@@ -186,7 +205,6 @@ body{background:var(--bg);color:var(--t1);min-height:100vh;max-width:430px;margi
       </div>
     </div>
   </div>
-
   <div id="qr-scan-panel" style="display:none">
     <div id="qr-scan-alert"></div>
     <div class="form-card">
@@ -199,18 +217,21 @@ body{background:var(--bg);color:var(--t1);min-height:100vh;max-width:430px;margi
   </div>
 </div>
 
-<!-- YÜKLE -->
 <div id="screen-topup" class="screen">
   <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">Bakiye Yükle</div><div></div></div>
-  <div id="topup-alert"></div>
   <div class="form-card">
-    <div class="form-title">Bakiye Ekle</div>
-    <div class="input-group"><div class="input-label">Tutar (₺)</div><input class="input" id="topup-amount" type="number" placeholder="100"></div>
-    <button class="btn-primary btn-green" onclick="doTopup()">Yükle</button>
+    <div class="form-title">Bakiye Nasıl Yüklenir?</div>
+    <div style="font-size:14px;color:var(--t2);line-height:1.7">
+      Bakiye yüklemek için yöneticiye başvurun. Ödemeniz alındıktan sonra bakiyeniz hesabınıza tanımlanır.
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-top:16px">
+      <div class="input-label" style="margin-bottom:8px">Kullanıcı ID'niz</div>
+      <div style="font-family:monospace;font-size:12px;word-break:break-all" id="my-user-id">-</div>
+      <div class="hint" style="margin-top:8px">Yöneticiye bu ID'yi iletin.</div>
+    </div>
   </div>
 </div>
 
-<!-- KARTLAR -->
 <div id="screen-cards" class="screen">
   <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">Kartlarım</div><div></div></div>
   <div class="section">
@@ -219,16 +240,14 @@ body{background:var(--bg);color:var(--t1);min-height:100vh;max-width:430px;margi
   </div>
 </div>
 
-<!-- GEÇMİŞ -->
 <div id="screen-history" class="screen">
   <div class="header"><div style="cursor:pointer;font-size:20px" onclick="showScreen('home')">←</div><div style="font-size:17px;font-weight:700">İşlem Geçmişi</div><div></div></div>
   <div class="section"><div id="history-list"><div class="loading"><div class="spinner"></div><br>Yükleniyor...</div></div></div>
 </div>
 
-<!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <div class="nav-item active" onclick="showScreen('home')" id="nav-home"><div class="nav-icon">🏠</div><div class="nav-label">Ana</div></div>
-  <div class="nav-item" onclick="showScreen('transfer')" id="nav-transfer"><div class="nav-icon">💸</div><div class="nav-label">Transfer</div></div>
+  <div class="nav-item" onclick="showScreen('transfer')" id="nav-transfer"><div class="nav-icon">💸</div><div class="nav-label">Gönder</div></div>
   <div class="nav-item" onclick="showScreen('qr')" id="nav-qr"><div class="nav-icon">📱</div><div class="nav-label">QR</div></div>
   <div class="nav-item" onclick="showScreen('cards')" id="nav-cards"><div class="nav-icon">💳</div><div class="nav-label">Kartlar</div></div>
   <div class="nav-item" onclick="showScreen('history')" id="nav-history"><div class="nav-icon">📋</div><div class="nav-label">Geçmiş</div></div>
@@ -246,48 +265,77 @@ if (token) showApp(); else document.getElementById('auth-screen').style.display=
 function showApp(){ document.getElementById('auth-screen').style.display='none'; document.getElementById('main-app').style.display='block'; loadHome(); }
 function logout(){ localStorage.removeItem('legacy_token'); token=null; document.getElementById('main-app').style.display='none'; document.getElementById('auth-screen').style.display='flex'; }
 function switchAuth(t){ document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='login')||(i===1&&t==='register'))); document.getElementById('login-form').style.display=t==='login'?'block':'none'; document.getElementById('register-form').style.display=t==='register'?'block':'none'; }
-function switchQrTab(t){ document.querySelectorAll('.tab2-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='create')||(i===1&&t==='scan'))); document.getElementById('qr-create-panel').style.display=t==='create'?'block':'none'; document.getElementById('qr-scan-panel').style.display=t==='scan'?'block':'none'; }
+
+function switchTrTab(t){
+  const btns=document.querySelectorAll('#screen-transfer .tab2-btn');
+  const keys=['user','iban','list'];
+  btns.forEach((b,i)=>b.classList.toggle('active',keys[i]===t));
+  document.getElementById('tr-user-panel').style.display=t==='user'?'block':'none';
+  document.getElementById('tr-iban-panel').style.display=t==='iban'?'block':'none';
+  document.getElementById('tr-list-panel').style.display=t==='list'?'block':'none';
+  if(t==='list') loadWithdrawals();
+}
+function switchQrTab(t){ const btns=document.querySelectorAll('#screen-qr .tab2-btn'); btns.forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='create')||(i===1&&t==='scan'))); document.getElementById('qr-create-panel').style.display=t==='create'?'block':'none'; document.getElementById('qr-scan-panel').style.display=t==='scan'?'block':'none'; }
 
 async function login(){
   const phone=document.getElementById('login-phone').value, password=document.getElementById('login-pass').value;
   if(!phone||!password) return showAlert('auth-alert','Telefon ve şifre gerekli','error');
   try{ const r=await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,password})}); const d=await r.json(); if(!r.ok) return showAlert('auth-alert',d.error||'Giriş hatası','error'); token=d.token; localStorage.setItem('legacy_token',token); showApp(); }catch(e){ showAlert('auth-alert','Sunucuya bağlanılamadı','error'); }
 }
-
 async function register(){
   const name=document.getElementById('reg-name').value, phone=document.getElementById('reg-phone').value, password=document.getElementById('reg-pass').value;
   if(!name||!phone||!password) return showAlert('auth-alert','Tüm alanlar gerekli','error');
   try{ const r=await fetch(API+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,password})}); const d=await r.json(); if(!r.ok) return showAlert('auth-alert',d.error||'Kayıt hatası','error'); token=d.token; localStorage.setItem('legacy_token',token); showApp(); }catch(e){ showAlert('auth-alert','Sunucuya bağlanılamadı','error'); }
 }
-
 async function loadHome(){
-  try{ const r=await fetch(API+'/auth/profile',{headers:{Authorization:'Bearer '+token}}); const d=await r.json(); document.getElementById('user-greeting').textContent='Hoş geldin, '+d.name+'!'; document.getElementById('balance-display').textContent='₺'+parseFloat(d.balance).toLocaleString('tr-TR',{minimumFractionDigits:2}); }catch(e){}
+  try{ const r=await fetch(API+'/auth/profile',{headers:{Authorization:'Bearer '+token}}); const d=await r.json(); document.getElementById('user-greeting').textContent='Hoş geldin, '+d.name+'!'; document.getElementById('balance-display').textContent='₺'+parseFloat(d.balance).toLocaleString('tr-TR',{minimumFractionDigits:2}); document.getElementById('my-user-id').textContent=d.id; }catch(e){}
   try{ const r=await fetch(API+'/cards',{headers:{Authorization:'Bearer '+token}}); const cards=await r.json(); if(cards.length) document.getElementById('card-uid-display').textContent=cards[0].card_uid; }catch(e){}
   loadTxList('recent-tx',3);
 }
-
 async function loadTxList(id,limit){
-  try{ const r=await fetch(API+'/payment/history',{headers:{Authorization:'Bearer '+token}}); const txs=await r.json(); const c=document.getElementById(id); if(!txs.length){c.innerHTML='<div class="loading">Henüz işlem yok</div>';return;} const items=limit?txs.slice(0,limit):txs; c.innerHTML=items.map(tx=>`<div class="tx"><div class="tx-icon" style="background:${tx.type==='payment'?'#FF6B6B20':tx.type==='transfer'?'#FFD16620':'#00D68F20'}">${tx.type==='payment'?'💳':tx.type==='transfer'?'💸':'➕'}</div><div class="tx-info"><div class="tx-name">${tx.description||tx.type}</div><div class="tx-date">${new Date(tx.created_at).toLocaleDateString('tr-TR')}</div></div><div class="tx-amount ${tx.type==='topup'?'in':'out'}">${tx.type==='topup'?'+':'-'}₺${parseFloat(tx.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div></div>`).join(''); }catch(e){document.getElementById(id).innerHTML='<div class="loading">Yüklenemedi</div>';}
+  try{ const r=await fetch(API+'/payment/history',{headers:{Authorization:'Bearer '+token}}); const txs=await r.json(); const c=document.getElementById(id); if(!txs.length){c.innerHTML='<div class="loading">Henüz işlem yok</div>';return;}
+  const items=limit?txs.slice(0,limit):txs;
+  c.innerHTML=items.map(tx=>{
+    const isIn = tx.type==='topup';
+    const icon = tx.type==='payment'?'💳':tx.type==='transfer'?'💸':tx.type==='withdrawal'?'🏦':'➕';
+    const bg = tx.type==='payment'?'#FF6B6B20':tx.type==='transfer'?'#FFD16620':tx.type==='withdrawal'?'#6C63FF20':'#00D68F20';
+    let pill='';
+    if(tx.status==='pending') pill='<span class="pill pill-pending">Bekliyor</span>';
+    else if(tx.status==='rejected') pill='<span class="pill pill-rej">Reddedildi</span>';
+    return `<div class="tx"><div class="tx-icon" style="background:${bg}">${icon}</div><div class="tx-info"><div class="tx-name">${tx.description||tx.type}${pill}</div><div class="tx-date">${new Date(tx.created_at).toLocaleDateString('tr-TR')}</div></div><div class="tx-amount ${isIn?'in':'out'}">${isIn?'+':'-'}₺${parseFloat(tx.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div></div>`;
+  }).join(''); }catch(e){ document.getElementById(id).innerHTML='<div class="loading">Yüklenemedi</div>'; }
 }
-
 async function doTransfer(){
   const receiver_phone=document.getElementById('tx-phone').value, amount=document.getElementById('tx-amount').value, description=document.getElementById('tx-desc').value;
   if(!receiver_phone||!amount) return showAlert('transfer-alert','Telefon ve tutar gerekli','error');
-  try{ const r=await fetch(API+'/payment/transfer',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({receiver_phone,amount:parseFloat(amount),description})}); const d=await r.json(); if(!r.ok) return showAlert('transfer-alert',d.error||'Transfer hatası','error'); showAlert('transfer-alert',d.receiver_name+"'e ₺"+amount+' gönderildi! Ref: '+d.reference_no,'success'); loadHome(); }catch(e){ showAlert('transfer-alert','Sunucu hatası','error'); }
+  try{ const r=await fetch(API+'/payment/transfer',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({receiver_phone,amount:parseFloat(amount),description})}); const d=await r.json(); if(!r.ok) return showAlert('transfer-alert',d.error||'Transfer hatası','error'); showAlert('transfer-alert',d.receiver_name+"'e ₺"+amount+' gönderildi!','success'); document.getElementById('tx-amount').value=''; loadHome(); }catch(e){ showAlert('transfer-alert','Sunucu hatası','error'); }
 }
-
-async function doTopup(){
-  const amount=document.getElementById('topup-amount').value;
-  if(!amount) return showAlert('topup-alert','Tutar gir','error');
-  try{ const r=await fetch(API+'/payment/topup',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({amount:parseFloat(amount)})}); const d=await r.json(); if(!r.ok) return showAlert('topup-alert',d.error||'Hata','error'); showAlert('topup-alert','₺'+amount+' eklendi!','success'); loadHome(); }catch(e){ showAlert('topup-alert','Sunucu hatası','error'); }
+async function onIbanInput(){
+  const v=document.getElementById('wd-iban').value.replace(/\s/g,'').toUpperCase();
+  const h=document.getElementById('wd-bank-hint');
+  if(v.length<9){ h.innerHTML=''; return; }
+  try{ const r=await fetch(API+'/withdrawal/detect-bank',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({iban:v})}); const d=await r.json(); h.innerHTML='Banka: <b>'+d.bank+'</b>'+(d.valid?'':' — IBAN eksik/hatalı'); }catch(e){}
 }
-
+async function doWithdrawal(){
+  const iban=document.getElementById('wd-iban').value, receiver_name=document.getElementById('wd-name').value, amount=document.getElementById('wd-amount').value, note=document.getElementById('wd-note').value;
+  if(!iban||!receiver_name||!amount) return showAlert('transfer-alert','IBAN, ad ve tutar gerekli','error');
+  try{ const r=await fetch(API+'/withdrawal/request',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({iban,receiver_name,amount:parseFloat(amount),note})}); const d=await r.json(); if(!r.ok) return showAlert('transfer-alert',d.error||'Talep hatası','error');
+  showAlert('transfer-alert','Talep oluşturuldu! '+d.bank+' — Ref: '+d.reference_no+' (onay bekliyor)','success');
+  document.getElementById('wd-iban').value='';document.getElementById('wd-name').value='';document.getElementById('wd-amount').value='';document.getElementById('wd-note').value='';document.getElementById('wd-bank-hint').innerHTML='';
+  loadHome(); }catch(e){ showAlert('transfer-alert','Sunucu hatası','error'); }
+}
+async function loadWithdrawals(){
+  try{ const r=await fetch(API+'/withdrawal/my-requests',{headers:{Authorization:'Bearer '+token}}); const list=await r.json(); const c=document.getElementById('wd-list');
+  if(!list.length){ c.innerHTML='<div class="loading">Henüz talep yok</div>'; return; }
+  c.innerHTML=list.map(w=>{
+    const pill=w.status==='pending'?'<span class="pill pill-pending">Bekliyor</span>':w.status==='approved'?'<span class="pill pill-ok">Gönderildi</span>':'<span class="pill pill-rej">Reddedildi</span>';
+    return `<div class="wd-item"><div class="wd-top"><div class="wd-amount">₺${parseFloat(w.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div><div>${pill}</div></div><div style="font-size:13px;margin-bottom:4px">${w.receiver_name} — ${w.bank_name}</div><div class="wd-meta">${w.iban}</div><div class="wd-meta" style="margin-top:4px">${w.reference_no} · ${new Date(w.created_at).toLocaleString('tr-TR')}</div>${w.admin_note?'<div style="font-size:12px;color:var(--t2);margin-top:6px">Not: '+w.admin_note+'</div>':''}</div>`;
+  }).join(''); }catch(e){ document.getElementById('wd-list').innerHTML='<div class="loading">Yüklenemedi</div>'; }
+}
 async function loadCards(){
-  try{ const r=await fetch(API+'/cards',{headers:{Authorization:'Bearer '+token}}); const cards=await r.json(); const c=document.getElementById('cards-list'); if(!cards.length){c.innerHTML='<div class="loading">Henüz kart yok</div>';return;} c.innerHTML=cards.map(card=>`<div class="card-item"><div class="card-badge">💳</div><div class="card-info"><div class="card-name">${card.label||'Sanal Kart'}</div><div class="card-uid">${card.card_uid}</div></div><div style="font-size:11px;color:${card.is_active?'var(--green)':'var(--red)'};">${card.is_active?'Aktif':'Pasif'}</div></div>`).join(''); }catch(e){}
+  try{ const r=await fetch(API+'/cards',{headers:{Authorization:'Bearer '+token}}); const cards=await r.json(); const c=document.getElementById('cards-list'); if(!cards.length){c.innerHTML='<div class="loading">Henüz kart yok</div>';return;} c.innerHTML=cards.map(card=>`<div class="card-item"><div class="card-badge">💳</div><div class="card-info"><div class="card-name">${card.label||'Sanal Kart'}</div><div class="card-uid">${card.card_uid}</div></div><div style="font-size:11px;color:${card.is_active?'var(--green)':'var(--red)'}">${card.is_active?'Aktif':'Pasif'}</div></div>`).join(''); }catch(e){}
 }
-
 async function createCard(){ try{ const r=await fetch(API+'/cards/virtual',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({label:'Sanal Kart'})}); if(r.ok) loadCards(); }catch(e){} }
-
 async function createQr(){
   const amount=document.getElementById('qr-amount').value, description=document.getElementById('qr-desc').value;
   if(!amount) return showAlert('qr-create-alert','Tutar gir','error');
@@ -309,23 +357,22 @@ async function createQr(){
     qrPoller=setInterval(async()=>{ try{ const sr=await fetch(API+'/qr/status/'+currentQr,{headers:{Authorization:'Bearer '+token}}); const sd=await sr.json(); if(sd.status==='paid'){document.getElementById('qr-waiting').style.display='none';document.getElementById('qr-paid').style.display='block';clearInterval(qrPoller);clearInterval(qrTimer);loadHome();} }catch(e){} },3000);
   }catch(e){ showAlert('qr-create-alert','Sunucu hatası','error'); }
 }
-
 function resetQr(){ clearInterval(qrTimer);clearInterval(qrPoller); document.getElementById('qr-form-box').style.display='block'; document.getElementById('qr-result-box').style.display='none'; document.getElementById('qr-amount').value=''; document.getElementById('qr-desc').value=''; }
-
 async function checkQr(){
   const code=document.getElementById('scan-code').value.trim().toUpperCase();
   if(!code) return showAlert('qr-scan-alert','Kod gir','error');
-  try{ const r=await fetch(API+'/qr/status/'+code,{headers:{Authorization:'Bearer '+token}}); const d=await r.json(); if(!r.ok){showAlert('qr-scan-alert',d.error||'Kod bulunamadı','error');document.getElementById('scan-pay-btn').style.display='none';return;} scannedQr=code; document.getElementById('scan-preview').innerHTML=`<div style="background:var(--bg3);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px"><div style="font-size:13px;color:var(--t2)">Satıcı: ${d.merchant_name}</div><div style="font-size:26px;font-weight:800;margin:6px 0">₺${parseFloat(d.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div><div style="font-size:12px;color:var(--t2)">${d.description}</div></div>`; document.getElementById('scan-pay-btn').style.display='block'; }catch(e){ showAlert('qr-scan-alert','Sunucu hatası','error'); }
+  try{ const r=await fetch(API+'/qr/status/'+code,{headers:{Authorization:'Bearer '+token}}); const d=await r.json(); if(!r.ok){showAlert('qr-scan-alert',d.error||'Kod bulunamadı','error');document.getElementById('scan-pay-btn').style.display='none';return;} scannedQr=code; document.getElementById('scan-preview').innerHTML=`<div style="background:var(--bg3);border:1px solid var(--bd);border-radius:14px;padding:14px"><div style="font-size:13px;color:var(--t2)">Satıcı: ${d.merchant_name}</div><div style="font-size:26px;font-weight:800;margin:6px 0">₺${parseFloat(d.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div><div style="font-size:12px;color:var(--t2)">${d.description}</div></div>`; document.getElementById('scan-pay-btn').style.display='block'; }catch(e){ showAlert('qr-scan-alert','Sunucu hatası','error'); }
 }
-
 async function payQr(){
   if(!scannedQr) return;
   try{ const r=await fetch(API+'/qr/pay/'+scannedQr,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token}}); const d=await r.json(); if(!r.ok) return showAlert('qr-scan-alert',d.error||'Ödeme hatası','error'); showAlert('qr-scan-alert','✓ Ödeme başarılı! '+d.merchant_name+' → ₺'+d.amount,'success'); document.getElementById('scan-code').value=''; document.getElementById('scan-preview').innerHTML=''; document.getElementById('scan-pay-btn').style.display='none'; loadHome(); }catch(e){ showAlert('qr-scan-alert','Sunucu hatası','error'); }
 }
-
 function showScreen(n){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active')); document.getElementById('screen-'+n).classList.add('active'); const nav=document.getElementById('nav-'+n); if(nav) nav.classList.add('active'); if(n==='home') loadHome(); if(n==='history') loadTxList('history-list'); if(n==='cards') loadCards(); if(n!=='qr'){clearInterval(qrTimer);clearInterval(qrPoller);} }
 
-function showAlert(id,msg,type){ const el=document.getElementById(id); el.innerHTML=`<div class="alert alert-${type}">${msg}</div>`; setTimeout(()=>el.innerHTML='',4000); }
+
+
+
+function showAlert(id,msg,type){ const el=document.getElementById(id); el.innerHTML=`<div class="alert alert-${type}">${msg}</div>`; setTimeout(()=>el.innerHTML='',5000); }
 </script>
 </body>
 </html>
