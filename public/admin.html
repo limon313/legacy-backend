@@ -17,36 +17,40 @@ body{background:var(--bg);color:var(--t1);min-height:100vh}
 .alert{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:12px}
 .alert-error{background:#FF6B6B15;border:1px solid #FF6B6B44;color:var(--red)}
 .alert-success{background:#00D68F15;border:1px solid #00D68F44;color:var(--green)}
-
-.wrap{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+.wrap{max-width:1150px;margin:0 auto;padding:24px 20px 60px}
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
 .topbar-logo{font-size:20px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--a1),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logout-btn{background:var(--bg2);border:1px solid var(--bd);color:var(--t2);padding:8px 16px;border-radius:10px;font-size:13px;cursor:pointer}
-
-.tabs{display:flex;gap:6px;margin-bottom:24px;background:var(--bg2);border-radius:14px;padding:4px}
-.tab{flex:1;padding:11px;border-radius:11px;border:none;background:none;font-size:12px;font-weight:700;cursor:pointer;color:var(--t2);text-transform:uppercase;letter-spacing:.3px}
+.tabs{display:flex;gap:6px;margin-bottom:24px;background:var(--bg2);border-radius:14px;padding:4px;flex-wrap:wrap}
+.tab{flex:1;min-width:110px;padding:11px;border-radius:11px;border:none;background:none;font-size:12px;font-weight:700;cursor:pointer;color:var(--t2);text-transform:uppercase}
 .tab.active{background:linear-gradient(135deg,var(--a1),#8B5CF6);color:#fff}
-
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
 .stat-card{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:18px}
 .stat-label{font-size:11px;color:var(--t2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
-.stat-value{font-size:26px;font-weight:800;color:var(--t1)}
+.stat-value{font-size:26px;font-weight:800}
 .stat-icon{font-size:20px;margin-bottom:8px}
-
 .panel{display:none}.panel.active{display:block}
 .table-wrap{overflow-x:auto;border-radius:16px}
 table{width:100%;border-collapse:collapse;background:var(--bg2)}
-th{text-align:left;padding:12px 14px;font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--bd);background:var(--bg3)}
-td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--bd)}
+th{text-align:left;padding:12px 14px;font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--bd);background:var(--bg3);white-space:nowrap}
+td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--bd);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-.badge{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700}
+.badge{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap}
 .badge-green{background:#00D68F15;color:var(--green)}
 .badge-red{background:#FF6B6B15;color:var(--red)}
 .badge-amber{background:#FFD16615;color:var(--amber)}
+.badge-blue{background:#6C63FF15;color:var(--a1)}
 .loading{text-align:center;padding:40px;color:var(--t2)}
-
 .adj-card{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:24px;max-width:420px}
 .adj-title{font-size:16px;font-weight:700;margin-bottom:16px}
+.mini-btn{border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;margin-right:6px}
+.btn-ok{background:var(--green);color:#04231A}
+.btn-no{background:var(--red);color:#2B0A0A}
+.iban-cell{font-family:monospace;font-size:12px}
+.copy-ic{cursor:pointer;color:var(--a2);margin-left:6px;font-size:11px}
+.filter-row{display:flex;gap:8px;margin-bottom:14px}
+.filter-btn{background:var(--bg2);border:1px solid var(--bd);color:var(--t2);padding:8px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
+.filter-btn.active{background:var(--a1);color:#fff;border-color:var(--a1)}
 </style>
 </head>
 <body>
@@ -68,6 +72,7 @@ tr:last-child td{border-bottom:none}
   </div>
   <div class="tabs">
     <button class="tab active" onclick="switchPanel('summary')">Özet</button>
+    <button class="tab" onclick="switchPanel('withdrawals')">Çekim Talepleri</button>
     <button class="tab" onclick="switchPanel('users')">Kullanıcılar</button>
     <button class="tab" onclick="switchPanel('transactions')">İşlemler</button>
     <button class="tab" onclick="switchPanel('adjust')">Bakiye Düzelt</button>
@@ -75,30 +80,38 @@ tr:last-child td{border-bottom:none}
 
   <div id="panel-summary" class="panel active">
     <div class="stats-grid" id="stats-grid"><div class="loading">Yükleniyor...</div></div>
+    <div class="table-wrap"><table><thead><tr><th>Tip</th><th>Adet</th><th>Toplam</th></tr></thead><tbody id="volume-table"></tbody></table></div>
+  </div>
+
+  <div id="panel-withdrawals" class="panel">
+    <div id="wd-alert"></div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="loadWd('pending',this)">Bekleyen</button>
+      <button class="filter-btn" onclick="loadWd('approved',this)">Gönderilen</button>
+      <button class="filter-btn" onclick="loadWd('rejected',this)">Reddedilen</button>
+      <button class="filter-btn" onclick="loadWd('',this)">Tümü</button>
+    </div>
     <div class="table-wrap">
-      <table><thead><tr><th>Tip</th><th>Adet</th><th>Toplam</th></tr></thead><tbody id="volume-table"></tbody></table>
+      <table><thead><tr><th>Kullanıcı</th><th>Alıcı</th><th>Banka</th><th>IBAN</th><th>Tutar</th><th>Durum</th><th>Tarih</th><th>İşlem</th></tr></thead>
+      <tbody id="wd-table"><tr><td colspan="8" class="loading">Yükleniyor...</td></tr></tbody></table>
     </div>
   </div>
 
   <div id="panel-users" class="panel">
-    <div class="table-wrap">
-      <table><thead><tr><th>Ad</th><th>Telefon</th><th>Bakiye</th><th>Kayıt Tarihi</th></tr></thead>
-      <tbody id="users-table"><tr><td colspan="4" class="loading">Yükleniyor...</td></tr></tbody></table>
-    </div>
+    <div class="table-wrap"><table><thead><tr><th>Ad</th><th>Telefon</th><th>Bakiye</th><th>ID</th><th>Kayıt</th></tr></thead>
+    <tbody id="users-table"><tr><td colspan="5" class="loading">Yükleniyor...</td></tr></tbody></table></div>
   </div>
 
   <div id="panel-transactions" class="panel">
-    <div class="table-wrap">
-      <table><thead><tr><th>Kullanıcı</th><th>Tip</th><th>Tutar</th><th>Açıklama</th><th>Tarih</th></tr></thead>
-      <tbody id="tx-table"><tr><td colspan="5" class="loading">Yükleniyor...</td></tr></tbody></table>
-    </div>
+    <div class="table-wrap"><table><thead><tr><th>Kullanıcı</th><th>Tip</th><th>Tutar</th><th>Açıklama</th><th>Durum</th><th>Tarih</th></tr></thead>
+    <tbody id="tx-table"><tr><td colspan="6" class="loading">Yükleniyor...</td></tr></tbody></table></div>
   </div>
 
   <div id="panel-adjust" class="panel">
     <div class="adj-card">
       <div class="adj-title">Bakiye Düzelt</div>
       <div id="adjust-alert"></div>
-      <input class="input" id="adj-userid" type="text" placeholder="Kullanıcı ID (UUID)">
+      <input class="input" id="adj-userid" type="text" placeholder="Kullanıcı ID (Kullanıcılar sekmesinden kopyala)">
       <input class="input" id="adj-amount" type="number" placeholder="Tutar (+ekle / -çıkar)">
       <input class="input" id="adj-reason" type="text" placeholder="Sebep">
       <button class="btn" onclick="adjustBalance()">Uygula</button>
@@ -110,6 +123,7 @@ tr:last-child td{border-bottom:none}
 <script>
 const API = 'https://legacy-backend-pzd3.onrender.com/api';
 let token = localStorage.getItem('legacy_admin_token');
+let wdFilter = 'pending';
 if(token) showPanel();
 
 async function adminLogin(){
@@ -125,15 +139,52 @@ async function adminLogin(){
 }
 function adminLogout(){ localStorage.removeItem('legacy_admin_token'); token=null; document.getElementById('admin-panel').style.display='none'; document.getElementById('login-screen').style.display='block'; }
 function showPanel(){ document.getElementById('login-screen').style.display='none'; document.getElementById('admin-panel').style.display='block'; loadSummary(); }
-function switchPanel(n){ document.querySelectorAll('.tab').forEach((t,i)=>{const ns=['summary','users','transactions','adjust'];t.classList.toggle('active',ns[i]===n);}); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active')); document.getElementById('panel-'+n).classList.add('active'); if(n==='summary')loadSummary(); if(n==='users')loadUsers(); if(n==='transactions')loadTransactions(); }
+function switchPanel(n){ document.querySelectorAll('.tab').forEach((t,i)=>{const ns=['summary','withdrawals','users','transactions','adjust'];t.classList.toggle('active',ns[i]===n);}); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active')); document.getElementById('panel-'+n).classList.add('active'); if(n==='summary')loadSummary(); if(n==='withdrawals')loadWd(wdFilter); if(n==='users')loadUsers(); if(n==='transactions')loadTransactions(); }
 
 async function loadSummary(){
   try{ const r=await fetch(API+'/admin/summary',{headers:{Authorization:'Bearer '+token}}); const d=await r.json();
-  document.getElementById('stats-grid').innerHTML=`<div class="stat-card"><div class="stat-icon">👥</div><div class="stat-label">Kullanıcı</div><div class="stat-value">${d.total_users}</div></div><div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Toplam Bakiye</div><div class="stat-value">₺${parseFloat(d.total_balance).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div></div><div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">İşlem</div><div class="stat-value">${d.total_transactions}</div></div><div class="stat-card"><div class="stat-icon">📅</div><div class="stat-label">Bugün</div><div class="stat-value">${d.transactions_today}</div></div>`;
+  let pendingCount=0;
+  try{ const pr=await fetch(API+'/withdrawal/admin/list?status=pending',{headers:{Authorization:'Bearer '+token}}); const pl=await pr.json(); pendingCount=pl.length||0; }catch(e){}
+  document.getElementById('stats-grid').innerHTML=`<div class="stat-card"><div class="stat-icon">👥</div><div class="stat-label">Kullanıcı</div><div class="stat-value">${d.total_users}</div></div><div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Toplam Bakiye</div><div class="stat-value">₺${parseFloat(d.total_balance).toLocaleString('tr-TR',{minimumFractionDigits:2})}</div></div><div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">İşlem</div><div class="stat-value">${d.total_transactions}</div></div><div class="stat-card"><div class="stat-icon">🏦</div><div class="stat-label">Bekleyen Çekim</div><div class="stat-value" style="color:${pendingCount>0?'var(--amber)':'var(--t1)'}">${pendingCount}</div></div>`;
   document.getElementById('volume-table').innerHTML=d.volume_by_type.map(v=>`<tr><td>${v.type}</td><td>${v.count}</td><td>₺${parseFloat(v.total).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td></tr>`).join(''); }catch(e){}
 }
-async function loadUsers(){ try{ const r=await fetch(API+'/admin/users',{headers:{Authorization:'Bearer '+token}}); const users=await r.json(); document.getElementById('users-table').innerHTML=users.map(u=>`<tr><td>${u.name}</td><td>${u.phone}</td><td>₺${parseFloat(u.balance).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td><td>${new Date(u.created_at).toLocaleDateString('tr-TR')}</td></tr>`).join(''); }catch(e){} }
-async function loadTransactions(){ try{ const r=await fetch(API+'/admin/transactions',{headers:{Authorization:'Bearer '+token}}); const txs=await r.json(); document.getElementById('tx-table').innerHTML=txs.map(t=>`<tr><td>${t.user_name}</td><td><span class="badge ${t.type==='topup'?'badge-green':t.type==='payment'?'badge-red':'badge-amber'}">${t.type}</span></td><td>₺${parseFloat(t.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td><td>${t.description||''}</td><td>${new Date(t.created_at).toLocaleString('tr-TR')}</td></tr>`).join(''); }catch(e){} }
+
+async function loadWd(status,btn){
+  wdFilter = status;
+  if(btn){ document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+  try{
+    const url = API+'/withdrawal/admin/list'+(status?('?status='+status):'');
+    const r=await fetch(url,{headers:{Authorization:'Bearer '+token}}); const list=await r.json();
+    if(!list.length){ document.getElementById('wd-table').innerHTML='<tr><td colspan="8" class="loading">Talep yok</td></tr>'; return; }
+    document.getElementById('wd-table').innerHTML=list.map(w=>{
+      const badge=w.status==='pending'?'<span class="badge badge-amber">Bekliyor</span>':w.status==='approved'?'<span class="badge badge-green">Gönderildi</span>':'<span class="badge badge-red">Reddedildi</span>';
+      const actions=w.status==='pending'
+        ? `<button class="mini-btn btn-ok" onclick="approveWd('${w.id}')">Gönderdim</button><button class="mini-btn btn-no" onclick="rejectWd('${w.id}')">Reddet</button>`
+        : `<span style="color:var(--t2);font-size:12px">${w.processed_at?new Date(w.processed_at).toLocaleDateString('tr-TR'):'-'}</span>`;
+      return `<tr><td>${w.user_name}<div style="font-size:11px;color:var(--t2)">${w.user_phone}</div></td><td>${w.receiver_name}</td><td><span class="badge badge-blue">${w.bank_name}</span></td><td class="iban-cell">${w.iban}<span class="copy-ic" onclick="copyTxt('${w.iban}')">kopyala</span></td><td style="font-weight:700">₺${parseFloat(w.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td><td>${badge}</td><td style="font-size:12px">${new Date(w.created_at).toLocaleString('tr-TR')}</td><td>${actions}</td></tr>`;
+    }).join('');
+  }catch(e){ document.getElementById('wd-table').innerHTML='<tr><td colspan="8" class="loading">Yüklenemedi</td></tr>'; }
+}
+function copyTxt(t){ navigator.clipboard?.writeText(t); }
+async function approveWd(id){
+  if(!confirm('Parayı bankadan gönderdiğinizi onaylıyor musunuz?')) return;
+  const note = prompt('Not (opsiyonel):') || '';
+  try{ const r=await fetch(API+'/withdrawal/admin/approve/'+id,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({admin_note:note})}); const d=await r.json();
+  document.getElementById('wd-alert').innerHTML=r.ok?'<div class="alert alert-success">Talep onaylandı</div>':`<div class="alert alert-error">${d.error}</div>`;
+  loadWd(wdFilter); setTimeout(()=>document.getElementById('wd-alert').innerHTML='',4000); }catch(e){}
+}
+async function rejectWd(id){
+  const note = prompt('Red sebebi:') || '';
+  if(!confirm('Talep reddedilecek ve bakiye iade edilecek. Onaylıyor musunuz?')) return;
+  try{ const r=await fetch(API+'/withdrawal/admin/reject/'+id,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({admin_note:note})}); const d=await r.json();
+  document.getElementById('wd-alert').innerHTML=r.ok?'<div class="alert alert-success">Talep reddedildi, bakiye iade edildi</div>':`<div class="alert alert-error">${d.error}</div>`;
+  loadWd(wdFilter); setTimeout(()=>document.getElementById('wd-alert').innerHTML='',4000); }catch(e){}
+}
+async function loadUsers(){ try{ const r=await fetch(API+'/admin/users',{headers:{Authorization:'Bearer '+token}}); const users=await r.json(); document.getElementById('users-table').innerHTML=users.map(u=>`<tr><td>${u.name}</td><td>${u.phone}</td><td>₺${parseFloat(u.balance).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td><td class="iban-cell">${u.id.slice(0,8)}...<span class="copy-ic" onclick="copyTxt('${u.id}')">kopyala</span></td><td>${new Date(u.created_at).toLocaleDateString('tr-TR')}</td></tr>`).join(''); }catch(e){} }
+async function loadTransactions(){ try{ const r=await fetch(API+'/admin/transactions',{headers:{Authorization:'Bearer '+token}}); const txs=await r.json(); document.getElementById('tx-table').innerHTML=txs.map(t=>{
+  const st=t.status==='pending'?'<span class="badge badge-amber">Bekliyor</span>':t.status==='rejected'?'<span class="badge badge-red">Red</span>':'<span class="badge badge-green">OK</span>';
+  const tp=t.type==='topup'?'badge-green':t.type==='payment'?'badge-red':t.type==='withdrawal'?'badge-blue':'badge-amber';
+  return `<tr><td>${t.user_name}</td><td><span class="badge ${tp}">${t.type}</span></td><td>₺${parseFloat(t.amount).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td><td>${t.description||''}</td><td>${st}</td><td style="font-size:12px">${new Date(t.created_at).toLocaleString('tr-TR')}</td></tr>`; }).join(''); }catch(e){} }
 async function adjustBalance(){ const user_id=document.getElementById('adj-userid').value, amount=document.getElementById('adj-amount').value, reason=document.getElementById('adj-reason').value; if(!user_id||!amount){document.getElementById('adjust-alert').innerHTML='<div class="alert alert-error">ID ve tutar gerekli</div>';return;} try{ const r=await fetch(API+'/admin/adjust-balance',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({user_id,amount:parseFloat(amount),reason})}); const d=await r.json(); document.getElementById('adjust-alert').innerHTML=r.ok?'<div class="alert alert-success">Başarılı!</div>':`<div class="alert alert-error">${d.error}</div>`; }catch(e){document.getElementById('adjust-alert').innerHTML='<div class="alert alert-error">Sunucu hatası</div>';} }
 </script>
 </body>
